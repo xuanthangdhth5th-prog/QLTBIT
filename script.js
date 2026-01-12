@@ -258,61 +258,53 @@ function openFormPrt() {
   document.getElementById("formModalPrinter").classList.add("active-flex");
 }
 
-function filtered() {
-  return assets.filter(
-    (a) =>
-      (!filterType.value || a.type === filterType.value) &&
-      (!filterDept.value || a.dept === filterDept.value) &&
-      JSON.stringify(a).toLowerCase().includes(search.value.toLowerCase())
-  );
+function openFormRouter() {
+  document.getElementById("defaultPage").classList.remove("active");
+  document.getElementById("formModalRouter").classList.add("active-flex");
 }
 
-const total = document.getElementById("total");
-const using = document.getElementById("using");
-const other = document.getElementById("other");
-const filterType = document.getElementById("filterType");
-
-/* Data */
-const depts = [
-  "Ban Giám đốc",
-  "PC-KSTT",
-  "HCNS",
-  "TCKT",
-  "KDTV",
-  "Mua hàng",
-  "CNTT",
-  "Khai thác",
-  "Kỹ thuật",
-  "XCĐ",
-  "Cơ giới",
-  "Logistics & GN",
-];
-const types = ["Laptop", "Desktop", "Khác"];
-const statuses = ["Đang sử dụng", "Dự phòng", "Hỏng", "Bảo trì", "Khác"];
-
-function initSelect(el, arr, all) {
-  el.innerHTML = all ? `<option value="">${all}</option>` : "";
-  arr.forEach((v) => (el.innerHTML += `<option>${v}</option>`));
+function openFormWifi() {
+  document.getElementById("defaultPage").classList.remove("active");
+  document.getElementById("formModalWifi").classList.add("active-flex");
 }
-initSelect(filterType, types, "Tất cả thiết bị");
-initSelect(filterDept, depts, "Tất cả phòng ban");
-initSelect(fType, types);
-initSelect(fDept, depts);
-initSelect(fStatus, statuses);
 
-filterType.onchange =
-  filterDept.onchange =
-  search.oninput =
-    () => {
-      page = 1;
-      render();
-    };
+function openFormSwitch() {
+  document.getElementById("defaultPage").classList.remove("active");
+  document.getElementById("formModalSwitch").classList.add("active-flex");
+}
 
 function closeForm() {
   document.getElementById("formModal").classList.remove("active-flex");
   document.getElementById("formModalPrinter").classList.remove("active-flex");
-  document.getElementById("closeBtn").classList.remove("active-flex");
+  document.getElementById("formModalRouter").classList.remove("active-flex");
+  document.getElementById("formModalWifi").classList.remove("active-flex");
+  document.getElementById("formModalSwitch").classList.remove("active-flex");
 }
+
+// Close modal when clicking outside the modal content
+document.addEventListener('click', function(event) {
+  const formModal = document.getElementById('formModal');
+  const formModalPrinter = document.getElementById('formModalPrinter');
+  const formModalRouter = document.getElementById('formModalRouter');
+  const formModalWifi = document.getElementById('formModalWifi');
+  const formModalSwitch = document.getElementById('formModalSwitch');
+  
+  if (event.target === formModal) {
+    formModal.classList.remove('active-flex');
+  }
+  if (event.target === formModalPrinter) {
+    formModalPrinter.classList.remove('active-flex');
+  }
+  if (event.target === formModalRouter) {
+    formModalRouter.classList.remove('active-flex');
+  }
+  if (event.target === formModalWifi) {
+    formModalWifi.classList.remove('active-flex');
+  }
+  if (event.target === formModalSwitch) {
+    formModalSwitch.classList.remove('active-flex');
+  }
+});
 
 // function handleImport() {
 //     document.getElementById("excelInput").click();
