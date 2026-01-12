@@ -7,6 +7,8 @@
 
     <!-- SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="style.css" />
 </head>
@@ -380,7 +382,56 @@
     </div>
     <!-- TRANG MẶC ĐỊNH -->
     <div id="defaultPage" class="page active">
-        <img src="The_Nghi_Son_International_Port.png" alt="Cảng Quốc tế Nghi Sơn">
+        <h2>📊 Bảng Thống Kê Thiết Bị CNTT</h2>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon">💻</div>
+                <div class="stat-content">
+                    <h3>PC/Laptop</h3>
+                    <p id="pcCount">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🖨️</div>
+                <div class="stat-content">
+                    <h3>Printer</h3>
+                    <p id="printerCount">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🌐</div>
+                <div class="stat-content">
+                    <h3>Router</h3>
+                    <p id="routerCount">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📡</div>
+                <div class="stat-content">
+                    <h3>Access Point</h3>
+                    <p id="wifiCount">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔌</div>
+                <div class="stat-content">
+                    <h3>Switch</h3>
+                    <p id="switchCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-wrapper">
+                <h3>Phân Bố Thiết Bị Theo Loại</h3>
+                <canvas id="typeChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Tình Trạng Thiết Bị</h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
     </div>
  
     </div>
