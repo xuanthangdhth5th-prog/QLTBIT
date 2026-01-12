@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Quản lý thiết bị CNTT - Cảng Quốc tế Nghi Sơn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div>
+    <aside class="qltb-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-bars-progress"></i>
+                <span onclick="onClickSection(this)" id="QLTB">QUẢN LÝ THIẾT BỊ CNTT</span>
+            </div>
+            <button class="close-btn" onclick="toggleSidebar()"></button>
+        </div>
+
+        <ul class="sidebar-menu">
+            <!-- MENU CÓ CON -->
+            <li class="has-sub">
+                <div class="menu-parent" onclick="toggleSub(this)">
+                    <div>
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                        <span>Thiết Bị</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <li onclick="onClickSection(this)" id="pcSection"><i class="fa-solid fa-desktop"></i> PC/ Laptop</li>
+                    <li onclick="onClickSection(this)" id="printerSection"><i class="fa-solid fa-print"></i> Printer</li>
+                    <li onclick="onClickSection(this)" id="routerSection"><i class="fa-solid fa-route"></i> Router</li>
+                    <li onclick="onClickSection(this)" id="wifiSection"><i class="fa-solid fa-wifi"></i> Access Point</li>
+                    <li onclick="onClickSection(this)" id="switchSection"> <i class="fa-solid fa-shuffle"></i> Swicth</li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+</div>
+    <!-- CONTENT -->
+<div class="content">
+
+<!-- GIAO DIỆN PC / LAPTOP -->
+<div id="pcPage" class="page">
+<h2>Quản lý PC/ Laptop / Macbook</h2>
+<section class="dashboard">
+    <div class="card">Tổng thiết bị: <b id="total">0</b></div>
+    <div class="card">Đang sử dụng: <b id="using">0</b></div>
+    <div class="card">Khác: <b id="other">0</b></div>
+</section>
+
+<section class="toolbar">
+    <button onclick="onClickSection(this)" id="themmoi">➕ Thêm thiết bị</button>
+
+    <select id="filterType"></select>
+    <!-- <select id="filterDept"></select> -->
+
+     <input id="search" placeholder="Tìm kiếm..." />
+
+    <input type="file" id="importFile" accept=".xlsx,.xls" />
+    <button onclick="handleImport()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="downloadTemplate()">Tải file mẫu</button>
+</section>
+     <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                 <th>Mã TB</th>
+                 <th>Tên TB</th>
+                 <th>Loại</th>
+                 <th>Người dùng</th>
+                 <th>Phòng ban</th>
+                 <th>Trạng thái</th>
+                 <th>Cấu hình</th>
+                 <th>Ngày nhập</th>
+                <th>Ghi chú</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+                <td colspan="10" style="text-align:center;">
+                     Không có dữ liệu
+                </td>
+            </tr>
+           </tbody>
+    </table>
+</div>
+<!-- Printer -->
+<div id="printerPage" class="page">
+<h2>Quản lý Printer</h2>
+<section class="dashboard">
+    <div class="card">Tổng thiết bị: <b id="total">0</b></div>
+    <div class="card">Đang sử dụng: <b id="using">0</b></div>
+    <div class="card">Khác: <b id="other">0</b></div>
+</section>
+
+<section class="toolbar">
+    <button onclick="onClickSection(this)" id="newprinter">➕ Thêm thiết bị</button>
+
+    <select id="filterType"></select>
+    <select id="filterDept"></select>
+
+     <input id="search" placeholder="Tìm kiếm..." />
+
+    <input type="file" id="importFile" accept=".xlsx,.xls" />
+    <button onclick="handleImport()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="downloadTemplate()">Tải file mẫu</button>
+</section>
+     <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                 <th>Mã TB</th>
+                 <th>Tên TB</th>
+                 <th>Hãng / Model</th>
+                 <th>Loại máy</th>
+                 <th>Địa điểm đặt</th>
+                 <th>Phòng ban sử dụng</th>
+                 <th>Trạng thái</th>
+                <th>Ghi chú</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+                <td colspan="9" style="text-align:center;">
+                     Không có dữ liệu
+                </td>
+            </tr>
+           </tbody>
+    </table>
+</div>
+<!-- Router -->
+<div id="routerPage" class="page">
+<h2>Quản lý Router</h2>
+<section class="dashboard">
+    <div class="card">Tổng thiết bị: <b id="total">0</b></div>
+    <div class="card">Đang sử dụng: <b id="using">0</b></div>
+    <div class="card">Khác: <b id="other">0</b></div>
+</section>
+
+<section class="toolbar">
+    <button onclick="onClickSection(this)" id="themmoi">➕ Thêm thiết bị</button>
+
+    <select id="filterType"></select>
+    <select id="filterDept"></select>
+
+     <input id="search" placeholder="Tìm kiếm..." />
+
+    <input type="file" id="importFile" accept=".xlsx,.xls" />
+    <button onclick="handleImport()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="downloadTemplate()">Tải file mẫu</button>
+</section>
+     <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                 <th>Mã TB</th>
+                 <th>Tên TB</th>
+                 <th>Hãng</th>
+                 <th>Model</th>
+                 <th>IP WAN</th>
+                 <th>IP LAN</th>
+                 <th>Vị trí lắp đặt</th>
+                 <th>Ngày lắp đặt</th>
+                 <th>Trạng thái</th>
+                <th>Ghi chú</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+                <td colspan="11" style="text-align:center;">
+                     Không có dữ liệu
+                </td>
+            </tr>
+           </tbody>
+    </table>
+</div>
+<!-- Access Point -->
+<div id="wifiPage" class="page">
+<h2>Quản lý Access Point</h2>
+<section class="dashboard">
+    <div class="card">Tổng thiết bị: <b id="total">0</b></div>
+    <div class="card">Đang sử dụng: <b id="using">0</b></div>
+    <div class="card">Khác: <b id="other">0</b></div>
+</section>
+
+<section class="toolbar">
+    <button onclick="onClickSection(this)" id="themmoi">➕ Thêm thiết bị</button>
+
+    <select id="filterType"></select>
+    <select id="filterDept"></select>
+
+     <input id="search" placeholder="Tìm kiếm..." />
+
+    <input type="file" id="importFile" accept=".xlsx,.xls" />
+    <button onclick="handleImport()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="downloadTemplate()">Tải file mẫu</button>
+</section>
+     <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                 <th>Mã TB</th>
+                 <th>SSID</th>
+                 <th>Thiết bị AP</th>
+                 <th>Hãng</th>
+                 <th>Model</th>
+                 <th>IP quản lý</th>
+                 <th>Vị trí lắp đặt</th>
+                 <th>Trạng thái</th>
+                <th>Ghi chú</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+                <td colspan="10" style="text-align:center;">
+                     Không có dữ liệu
+                </td>
+            </tr>
+           </tbody>
+    </table>
+</div>
+<!-- Switch -->
+<div id="switchPage" class="page">
+<h2>Quản lý Switch</h2>
+<section class="dashboard">
+    <div class="card">Tổng thiết bị: <b id="total">0</b></div>
+    <div class="card">Đang sử dụng: <b id="using">0</b></div>
+    <div class="card">Khác: <b id="other">0</b></div>
+</section>
+
+<section class="toolbar">
+    <button onclick="onClickSection(this)" id="themmoi">➕ Thêm thiết bị</button>
+
+    <select id="filterType"></select>
+    <select id="filterDept"></select>
+
+     <input id="search" placeholder="Tìm kiếm..." />
+
+    <input type="file" id="importFile" accept=".xlsx,.xls" />
+    <button onclick="handleImport()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="downloadTemplate()">Tải file mẫu</button>
+</section>
+     <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                 <th>Mã TB</th>
+                 <th>Hãng</th>
+                 <th>Model</th>
+                 <th>IP quản lý</th>
+                 <th>Số port</th>
+                 <th>Số cổng</th>
+                 <th>Vị trí lắp đặt</th>
+                 <th>PoE</th>
+                 <th>Trạng thái</th>
+                <th>Ghi chú</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+                <td colspan="11" style="text-align:center;">
+                     Không có dữ liệu
+                </td>
+            </tr>
+           </tbody>
+    </table>
+</div>
+    <!-- Form them moi PC/Laptop -->
+     <div id="formModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeForm()" id="closeBtn" class="close-btn">&times;</span>
+            <h2>Thêm thiết bị</h2>
+            <form id="assetForm" onsubmit="event.preventDefault(); saveItem();">
+                <div class="themthietbi">
+                    <br>
+                    <table >
+                        <tr >
+                            <td class="cot1">Mã Thiết bị </td>
+                            <td><input style="width: 100%;" id="fCode" placeholder="IT001" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Tên Thiết bị</td>
+                            <td><input style="width: 100%;" id="fName" placeholder="02240006-NB001" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Loại Thiết bị</td>
+                            <td><select id="fType" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Người sử dụng</td>
+                            <td><input style="width: 100%;" id="fUser" placeholder="Nguyễn Văn A" /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Phòng ban</td>
+                            <td><select id="fDept" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Tình trạng</td>
+                            <td><select id="fStatus" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Ngày cấp</td>
+                            <td><input id="fDate" type="date" /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Cấu hình </td>
+                            <td><textarea style="width: 100%;" id="fConfig" placeholder="i7-12450u/16gb/màn hình Dell 22 inch full hd"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Ghi chú </td>
+                            <td><textarea style="width: 100%;" id="fNote" placeholder="Máy của Nguyễn Văn A nghỉ việc chuyển sang"></textarea></td>
+                        </tr>
+                    </table>
+                    <div class="form-actions">
+                        <button type="submit">💾 Lưu</button>
+                        <button type="reset">Làm Lại</button>
+                        <!-- <button type="button" onclick="closeForm()">❌ Hủy</button> -->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Form them moi Printer -->
+     <div id="formModalPrinter" class="modalPrt">
+        <div class="modal-content">
+            <span onclick="closeForm()" id="closeBtn" class="close-btn">&times;</span>
+            <h2>Thêm thiết bị</h2>
+            <form id="assetForm" onsubmit="event.preventDefault(); saveItem();">
+                <div class="themthietbi">
+                    <br>
+                    <table >
+                        <tr >
+                            <td class="cot1">Mã Thiết bị </td>
+                            <td><input style="width: 100%;" id="fCode" placeholder="IT001" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Hãng/ Model</td>
+                            <td><input style="width: 100%;" id="fName" placeholder="02240006-NB001" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Loại máy</td>
+                            <td><select id="fType" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Địa điểm đặt</td>
+                            <td><input style="width: 100%;" id="fUser" placeholder="Nguyễn Văn A" /></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Phòng ban sử dụng</td>
+                            <td><select id="fDept" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Tình trạng</td>
+                            <td><select id="fStatus" required></select></td>
+                        </tr>
+                        <tr>
+                            <td class="cot1">Ghi chú </td>
+                            <td><textarea style="width: 100%;" id="fNote" placeholder="Máy của Nguyễn Văn A nghỉ việc chuyển sang"></textarea></td>
+                        </tr>
+                    </table>
+                    <div class="form-actions">
+                        <button type="submit">💾 Lưu</button>
+                        <button type="reset">Làm Lại</button>
+                        <!-- <button type="button" onclick="closeForm()">❌ Hủy</button> -->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- TRANG MẶC ĐỊNH -->
+    <div id="defaultPage" class="page active">
+        <img src="The_Nghi_Son_International_Port.png" alt="Cảng Quốc tế Nghi Sơn">
+    </div>
+ 
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
