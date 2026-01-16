@@ -96,58 +96,125 @@ function initDashboard() {
   }
 }
 
-// Update dashboard with data
-function updateDashboard() {
-  const typeCounts = {
-    'Laptop': 0,
-    'Desktop': 0,
-    'Printer': 0,
-    'Router': 0,
-    'Khác': 0
-  };
-  
-  const statusCounts = {
-    'Đang sử dụng': 0,
-    'Dự phòng': 0,
-    'Hỏng': 0,
-    'Bảo trì': 0,
-    'Khác': 0
-  };
-
-  // Update counters
-  const pcCountEl = document.getElementById('pcCount');
-  const printerCountEl = document.getElementById('printerCount');
-  const routerCountEl = document.getElementById('routerCount');
-  const wifiCountEl = document.getElementById('wifiCount');
-  const switchCountEl = document.getElementById('switchCount');
-  
-  if (pcCountEl) pcCountEl.innerText = '0';
-  if (printerCountEl) printerCountEl.innerText = '0';
-  if (routerCountEl) routerCountEl.innerText = '0';
-  if (wifiCountEl) wifiCountEl.innerText = '0';
-  if (switchCountEl) switchCountEl.innerText = '0';
-
-  // Update charts if they exist
-  if (typeChart) {
-    typeChart.data.datasets[0].data = [
-      typeCounts['Laptop'] || 0,
-      typeCounts['Printer'] || 0,
-      typeCounts['Router'] || 0,
-      typeCounts['Khác'] || 0,
-      0
+// Update dashboard with data from database
+async function updateDashboard() {
+  try {
+    // Get counts from all tables
+    const pcRes = await fetch('http://localhost:3000/api/equipment?type=PC');
+    const printerRes = await fetch('http://localhost:3000/api/equipment?type=Printer');
+    const routerRes = await fetch('http://localhost:3000/api/equipment?type=Router');
+    const wifiRes = await fetch('http://localhost:3000/api/equipment?type=WiFi');
+    const switchRes = await fetch('http://localhost:3000/api/equipment?type=Switch');
+    
+    const pcData = await pcRes.json();
+    const printerData = await printerRes.json();
+    const routerData = await routerRes.json();
+    const wifiData = await wifiRes.json();
+    const switchData = await switchRes.json();
+    
+    const pcCount = pcData.success ? pcData.data.length : 0;
+    const printerCount = printerData.success ? printerData.data.length : 0;
+    const routerCount = routerData.success ? routerData.data.length : 0;
+    const wifiCount = wifiData.success ? wifiData.data.length : 0;
+    const switchCount = switchData.success ? switchData.data.length : 0;
+    
+    // Update counters
+    const pcCountEl = document.getElementById('pcCount');
+    const printerCountEl = document.getElementById('printerCount');
+    const routerCountEl = document.getElementById('routerCount');
+    const wifiCountEl = document.getElementById('wifiCount');
+    const switchCountEl = document.getElementById('switchCount');
+    
+    if (pcCountEl) pcCountEl.innerText = pcCount;
+    if (printerCountEl) printerCountEl.innerText = printerCount;
+    if (routerCountEl) routerCountEl.innerText = routerCount;
+    if (wifiCountEl) wifiCountEl.innerText = wifiCount;
+    if (switchCountEl) switchCountEl.innerText = switchCount;
+    
+    // Calculate status counts
+    const allData = [
+      ...(pcData.success ? pcData.data : []),
+      ...(printerData.success ? printerData.data : []),
+      ...(routerData.success ? routerData.data : []),
+      ...(wifiData.success ? wifiData.data : []),
+      ...(switchData.success ? switchData.data : [])
     ];
-    typeChart.update();
+    
+    const statusCounts = {
+      'Đang sử dụng': 0,
+      'Dự phòng': 0,
+      'Hỏng': 0,
+      'Bảo trì': 0,
+      'Khác': 0
+    };
+    
+    allData.forEach(item => {
+      const status = item.TrangThai || 'Khác';
+      if (statusCounts.hasOwnProperty(status)) {
+        statusCounts[status]++;
+      } else {
+        statusCounts['Khác']++;
+      }
+    });
+    
+    // Update charts if they exist
+    if (typeChart) {
+      typeChart.data.datasets[0].data = [pcCount, printerCount, routerCount, wifiCount, switchCount];
+      typeChart.update();
+    }
+    
+    if (statusChart) {
+      statusChart.data.datasets[0].data = [
+        statusCounts['Đang sử dụng'] || 0,
+        statusCounts['Dự phòng'] || 0,
+        statusCounts['Hỏng'] || 0,
+        statusCounts['Bảo trì'] || 0,
+        statusCounts['Khác'] || 0
+      ];
+      statusChart.update();
+    }
+    
+    console.log('Dashboard updated:', { pcCount, printerCount, routerCount, wifiCount, switchCount });
+  } catch (err) {
+    console.error('Error updating dashboard:', err);
   }
+}
 
-  if (statusChart) {
-    statusChart.data.datasets[0].data = [
-      statusCounts['Đang sử dụng'] || 0,
-      statusCounts['Dự phòng'] || 0,
-      statusCounts['Hỏng'] || 0,
-      statusCounts['Bảo trì'] || 0,
-      statusCounts['Khác'] || 0
-    ];
-    statusChart.update();
+// Load statistics for each equipment type
+async function loadTypeStats(type = 'PC') {
+  try {
+    const response = await fetch(`http://localhost:3000/api/equipment?type=${type}`);
+    const result = await response.json();
+    const data = result.success ? result.data : [];
+    
+    // Calculate counts
+    const total = data.length;
+    const using = data.filter(item => item.TrangThai === 'Đang sử dụng').length;
+    const other = total - using;
+    
+    // Map type to element IDs
+    const typeMap = {
+      'PC': { total: 'pcTotal', using: 'pcUsing', other: 'pcOther' },
+      'Printer': { total: 'printerTotal', using: 'printerUsing', other: 'printerOther' },
+      'Router': { total: 'routerTotal', using: 'routerUsing', other: 'routerOther' },
+      'WiFi': { total: 'wifiTotal', using: 'wifiUsing', other: 'wifiOther' },
+      'Switch': { total: 'switchTotal', using: 'switchUsing', other: 'switchOther' }
+    };
+    
+    const ids = typeMap[type];
+    if (ids) {
+      const totalEl = document.getElementById(ids.total);
+      const usingEl = document.getElementById(ids.using);
+      const otherEl = document.getElementById(ids.other);
+      
+      if (totalEl) totalEl.innerText = total;
+      if (usingEl) usingEl.innerText = using;
+      if (otherEl) otherEl.innerText = other;
+    }
+    
+    console.log(`Stats for ${type}:`, { total, using, other });
+  } catch (err) {
+    console.error(`Error loading stats for ${type}:`, err);
   }
 }
 
@@ -180,6 +247,7 @@ function showPage(pageId, activeMenuId) {
     else if (pageId === 'switchPage') equipmentType = 'Switch';
     
     loadEquipmentData(equipmentType);
+    loadTypeStats(equipmentType);
   }
   
   // Initialize dashboard if showing default page
