@@ -68,7 +68,7 @@
     <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
     <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
-     <table>
+     <table id="pcTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -113,7 +113,7 @@
     <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
     <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
-     <table>
+     <table id="printerTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -146,7 +146,7 @@
 </section>
 
 <section class="toolbar">
-    <button class="btn-action" onclick="openFormPrt()">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormRouter()">➕ Thêm thiết bị</button>
 
     <select id="filterType" class="filter-select"></select>
 
@@ -157,7 +157,7 @@
     <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
     <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
-     <table>
+     <table id="routerTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -192,7 +192,7 @@
 </section>
 
 <section class="toolbar">
-    <button class="btn-action" onclick="openFormSwitch()">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormWifi()">➕ Thêm thiết bị</button>
 
     <select id="filterType" class="filter-select"></select>
 
@@ -202,7 +202,7 @@
     <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
     <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
     <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
-     <table>
+     <table id="wifiTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -236,7 +236,7 @@
 </section>
 
 <section class="toolbar">
-    <button class="btn-action" onclick="openFormRouter()">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormSwitch()">➕ Thêm thiết bị</button>
 
     <select id="filterType" class="filter-select"></select>
 
@@ -247,7 +247,7 @@
     <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
     <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
-     <table>
+     <table id="switchTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -385,6 +385,10 @@
                     <input type="text" id="fName" placeholder="Cisco Router" required />
                 </div>
                 <div class="form-group">
+                    <label for="fType">Loại Thiết bị <span class="required">*</span></label>
+                    <select id="fType" required></select>
+                </div>
+                <div class="form-group">
                     <label for="fBrand">Hãng</label>
                     <input type="text" id="fBrand" placeholder="Cisco" />
                 </div>
@@ -407,6 +411,10 @@
                 <div class="form-group">
                     <label for="fDate">Ngày lắp đặt</label>
                     <input type="date" id="fDate" />
+                </div>
+                <div class="form-group">
+                    <label for="fDept">Phòng ban <span class="required">*</span></label>
+                    <select id="fDept" required></select>
                 </div>
                 <div class="form-group">
                     <label for="fStatus">Tình trạng <span class="required">*</span></label>
@@ -443,6 +451,10 @@
                 <div class="form-group">
                     <label for="fName">Thiết bị AP <span class="required">*</span></label>
                     <input type="text" id="fName" placeholder="TP-Link EAP225" required />
+                </div>
+                <div class="form-group">
+                    <label for="fType">Loại Thiết bị <span class="required">*</span></label>
+                    <select id="fType" required></select>
                 </div>
                 <div class="form-group">
                     <label for="fBrand">Hãng</label>
@@ -489,6 +501,10 @@
                     <input type="text" id="fCode" placeholder="SW001" required />
                 </div>
                 <div class="form-group">
+                    <label for="fType">Loại Thiết bị <span class="required">*</span></label>
+                    <select id="fType" required></select>
+                </div>
+                <div class="form-group">
                     <label for="fBrand">Hãng</label>
                     <input type="text" id="fBrand" placeholder="Cisco" />
                 </div>
@@ -519,6 +535,10 @@
                         <option value="Có">Có</option>
                         <option value="Không">Không</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="fDept">Phòng ban <span class="required">*</span></label>
+                    <select id="fDept" required></select>
                 </div>
                 <div class="form-group">
                     <label for="fStatus">Tình trạng <span class="required">*</span></label>

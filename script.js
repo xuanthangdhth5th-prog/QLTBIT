@@ -6,6 +6,7 @@ let statusChart = null;
 document.addEventListener('DOMContentLoaded', function() {
   initDashboard();
   setupImportHandler();
+  loadEquipmentData(); // Load data from database
 });
 
 // Initialize dashboard charts
@@ -170,6 +171,17 @@ function showPage(pageId, activeMenuId) {
     }
   }
   
+  // Load equipment data based on page
+  if (pageId === 'pcPage' || pageId === 'printerPage' || pageId === 'routerPage' || pageId === 'wifiPage' || pageId === 'switchPage') {
+    let equipmentType = 'PC';
+    if (pageId === 'printerPage') equipmentType = 'Printer';
+    else if (pageId === 'routerPage') equipmentType = 'Router';
+    else if (pageId === 'wifiPage') equipmentType = 'WiFi';
+    else if (pageId === 'switchPage') equipmentType = 'Switch';
+    
+    loadEquipmentData(equipmentType);
+  }
+  
   // Initialize dashboard if showing default page
   if (pageId === 'defaultPage') {
     initDashboard();
@@ -225,6 +237,8 @@ function openFormRouter() {
   form.reset();
   document.getElementById('formModalRouter').classList.add('active-flex');
   // Initialize dropdowns for Router form
+  initializeTypeDropdown('assetFormRouter', ['Router', 'Modem', 'Gateway']);
+  initializeDeptDropdown('assetFormRouter');
   initializeStatusDropdown('assetFormRouter');
 }
 
@@ -233,6 +247,8 @@ function openFormWifi() {
   form.reset();
   document.getElementById('formModalWifi').classList.add('active-flex');
   // Initialize dropdowns for Access Point form
+  initializeTypeDropdown('assetFormWifi', ['Access Point', 'WiFi Mesh', 'Wireless Router']);
+  initializeDeptDropdown('assetFormWifi');
   initializeStatusDropdown('assetFormWifi');
 }
 
@@ -241,6 +257,8 @@ function openFormSwitch() {
   form.reset();
   document.getElementById('formModalSwitch').classList.add('active-flex');
   // Initialize dropdowns for Switch form
+  initializeTypeDropdown('assetFormSwitch', ['Managed Switch', 'Unmanaged Switch', 'PoE Switch']);
+  initializeDeptDropdown('assetFormSwitch');
   initializeStatusDropdown('assetFormSwitch');
 }
 
@@ -429,8 +447,8 @@ function downloadTemplate() {
   XLSX.writeFile(wb, 'Mau_nhap_thiet_bi.xlsx');
 }
 
-// Save item to database (simulated)
-function saveItem() {
+// Save item to database
+async function saveItem() {
   const form = event.target.closest('form');
   if (!form) return;
   
@@ -452,14 +470,249 @@ function saveItem() {
     return;
   }
   
-  // Get form data
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
+  // Determine equipment type from form ID
+  let equipmentType = 'PC';
+  if (form.id === 'assetFormPrinter') {
+    equipmentType = 'Printer';
+  } else if (form.id === 'assetFormRouter') {
+    equipmentType = 'Router';
+  } else if (form.id === 'assetFormWifi') {
+    equipmentType = 'WiFi';
+  } else if (form.id === 'assetFormSwitch') {
+    equipmentType = 'Switch';
+  }
   
-  console.log('Lưu dữ liệu:', data);
-  alert('✓ Lưu dữ liệu thành công!');
+  // Get form data from elements by ID - support both name and id
+  const maTB = form.querySelector('#fCode')?.value || '';
+  const tenTB = form.querySelector('#fName')?.value || '';
+  const loaiTB = form.querySelector('#fType')?.value || '';
+  const phongBan = form.querySelector('#fDept')?.value || '';
+  const trangThai = form.querySelector('#fStatus')?.value || 'Đang sử dụng';
+  const ghiChu = form.querySelector('#fNote')?.value || '';
   
-  // Reset form and close
-  form.reset();
-  closeForm();
+  // PC-specific fields
+  const nguoiDung = form.querySelector('#fUser')?.value || '';
+  const cauHinh = form.querySelector('#fConfig')?.value || '';
+  const ngayNhap = form.querySelector('#fDate')?.value || new Date().toISOString().split('T')[0];
+  
+  // Printer-specific fields
+  const diaDiemDat = form.querySelector('[id*="fUser"]')?.value || '';
+  
+  // Router-specific fields
+  const hang = form.querySelector('#fBrand')?.value || '';
+  const model = form.querySelector('#fModel')?.value || '';
+  const ipWan = form.querySelector('#fIpWan')?.value || '';
+  const ipLan = form.querySelector('#fIpLan')?.value || '';
+  const viTriLapDat = form.querySelector('#fLocation')?.value || form.querySelector('#fPlacement')?.value || '';
+  const ngayLapDat = form.querySelector('#fDate')?.value || '';
+  
+  // WiFi-specific fields
+  const ssid = form.querySelector('#fSsid')?.value || '';
+  const ipQuanLyField = form.querySelector('#fIp')?.value || '';
+  
+  // Switch-specific fields
+  const soPort = form.querySelector('#fPort')?.value || '0';
+  const soCong = form.querySelector('#fUplink')?.value || '0';
+  const poe = form.querySelector('#fPoe')?.value || '';
+  
+  // Validate data not empty
+  if (!maTB || !tenTB || !loaiTB || !phongBan) {
+    alert('Lỗi: Mã TB, Tên TB, Loại TB, Phòng ban không được trống!');
+    return;
+  }
+  
+  const data = {
+    maTB: maTB,
+    tenTB: tenTB,
+    loaiTB: loaiTB,
+    phongBan: phongBan,
+    trangThai: trangThai,
+    ghiChu: ghiChu,
+    equipmentType: equipmentType, // Add equipment type explicitly
+    // PC fields
+    nguoiDung: nguoiDung,
+    cauHinh: cauHinh,
+    ngayNhap: ngayNhap,
+    // Printer fields
+    diaDiemDat: diaDiemDat,
+    // Router fields
+    hang: hang,
+    model: model,
+    ipWan: ipWan,
+    ipLan: ipLan,
+    viTriLapDat: viTriLapDat,
+    ngayLapDat: ngayLapDat,
+    // WiFi fields
+    ssid: ssid,
+    ipQuanLy: ipQuanLyField,
+    // Switch fields
+    soPort: soPort,
+    soCong: soCong,
+    poe: poe
+  };
+  
+  console.log('Dữ liệu gửi:', data);
+  console.log('Form ID:', form.id);
+  
+  try {
+    const response = await fetch('http://localhost:3000/api/equipment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      alert('✓ Lưu dữ liệu thành công!');
+      form.reset();
+      closeForm();
+      
+      // Determine equipment type from form ID
+      let equipmentType = 'PC';
+      if (form.id === 'assetFormPrinter') {
+        equipmentType = 'Printer';
+      } else if (form.id === 'assetFormRouter') {
+        equipmentType = 'Router';
+      } else if (form.id === 'assetFormWifi') {
+        equipmentType = 'WiFi';
+      } else if (form.id === 'assetFormSwitch') {
+        equipmentType = 'Switch';
+      }
+      
+      loadEquipmentData(equipmentType); // Reload data with correct type
+    } else {
+      alert('❌ Lỗi: ' + result.message);
+    }
+  } catch (err) {
+    console.error('Error saving equipment:', err);
+    alert('❌ Lỗi kết nối đến server: ' + err.message);
+  }
+}
+
+// Load equipment data from database
+async function loadEquipmentData(type = 'PC') {
+  try {
+    const response = await fetch(`http://localhost:3000/api/equipment?type=${encodeURIComponent(type)}`);
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('Equipment data for', type, ':', result.data);
+      // Update table with fetched data
+      displayEquipmentData(result.data, type);
+    }
+  } catch (err) {
+    console.error('Error loading equipment:', err);
+  }
+}
+
+// Display equipment data in table
+function displayEquipmentData(data, type = 'PC') {
+  if (!data || data.length === 0) {
+    console.log('No data to display for type:', type);
+    return;
+  }
+  
+  // Find the correct table based on type
+  let tableId = 'pcTable';
+  if (type.toLowerCase().includes('printer')) {
+    tableId = 'printerTable';
+  } else if (type.toLowerCase().includes('router')) {
+    tableId = 'routerTable';
+  } else if (type.toLowerCase().includes('wifi') || type.toLowerCase().includes('access point')) {
+    tableId = 'wifiTable';
+  } else if (type.toLowerCase().includes('switch')) {
+    tableId = 'switchTable';
+  }
+  
+  const table = document.getElementById(tableId);
+  if (!table) {
+    console.log('Table not found:', tableId);
+    return;
+  }
+  
+  const tbody = table.querySelector('tbody');
+  if (!tbody) {
+    console.log('Table body not found for table:', tableId);
+    return;
+  }
+  
+  // Xóa hết dữ liệu cũ
+  tbody.innerHTML = '';
+  
+  // Thêm dữ liệu mới dựa trên loại thiết bị
+  data.forEach((item, index) => {
+    const row = document.createElement('tr');
+    let rowHTML = `<td>${index + 1}</td><td>${item.MaTB || ''}</td>`;
+    
+    if (type.toLowerCase().includes('pc') || type.toLowerCase().includes('laptop')) {
+      // PC/Laptop columns
+      rowHTML += `
+        <td>${item.TenTB || ''}</td>
+        <td>${item.LoaiTB || ''}</td>
+        <td>${item.NguoiDung || ''}</td>
+        <td>${item.PhongBan || ''}</td>
+        <td>${item.TrangThai || ''}</td>
+        <td>${item.CauHinh || ''}</td>
+        <td>${new Date(item.NgayNhap || new Date()).toLocaleDateString('vi-VN')}</td>
+        <td>${item.GhiChu || ''}</td>
+      `;
+    } else if (type.toLowerCase().includes('printer')) {
+      // Printer columns
+      rowHTML += `
+        <td>${item.TenTB || ''}</td>
+        <td>${item.Hang || ''}</td>
+        <td>${item.Model || ''}</td>
+        <td>${item.DiaDiemDat || ''}</td>
+        <td>${item.PhongBan || ''}</td>
+        <td>${item.TrangThai || ''}</td>
+        <td>${item.GhiChu || ''}</td>
+      `;
+    } else if (type.toLowerCase().includes('router')) {
+      // Router columns
+      rowHTML += `
+        <td>${item.TenTB || ''}</td>
+        <td>${item.Hang || ''}</td>
+        <td>${item.Model || ''}</td>
+        <td>${item.IpWan || ''}</td>
+        <td>${item.IpLan || ''}</td>
+        <td>${item.ViTriLapDat || ''}</td>
+        <td>${item.NgayLapDat ? new Date(item.NgayLapDat).toLocaleDateString('vi-VN') : ''}</td>
+        <td>${item.TrangThai || ''}</td>
+        <td>${item.GhiChu || ''}</td>
+      `;
+    } else if (type.toLowerCase().includes('wifi') || type.toLowerCase().includes('access point')) {
+      // WiFi columns
+      rowHTML += `
+        <td>${item.SSID || ''}</td>
+        <td>${item.ThietBiAP || ''}</td>
+        <td>${item.Hang || ''}</td>
+        <td>${item.Model || ''}</td>
+        <td>${item.IpQuanLy || ''}</td>
+        <td>${item.ViTriLapDat || ''}</td>
+        <td>${item.TrangThai || ''}</td>
+        <td>${item.GhiChu || ''}</td>
+      `;
+    } else if (type.toLowerCase().includes('switch')) {
+      // Switch columns
+      rowHTML += `
+        <td>${item.Hang || ''}</td>
+        <td>${item.Model || ''}</td>
+        <td>${item.IpQuanLy || ''}</td>
+        <td>${item.SoPort || ''}</td>
+        <td>${item.SoCong || ''}</td>
+        <td>${item.ViTriLapDat || ''}</td>
+        <td>${item.PoE || ''}</td>
+        <td>${item.TrangThai || ''}</td>
+        <td>${item.GhiChu || ''}</td>
+      `;
+    }
+    
+    row.innerHTML = rowHTML;
+    tbody.appendChild(row);
+  });
+  
+  console.log('Displayed', data.length, 'rows for type:', type);
 }
