@@ -16,11 +16,11 @@
 <div>
     <aside class="qltb-sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo">
+            <div class="logo" onclick="showPage('defaultPage')">
                 <i class="fa-solid fa-bars-progress"></i>
-                <span onclick="onClickSection(this)" id="QLTB">QUẢN LÝ THIẾT BỊ CNTT</span>
+                <span>QUẢN LÝ TB</span>
             </div>
-            <button class="close-btn" onclick="toggleSidebar()"></button>
+            <button class="close-btn" onclick="toggleSidebar()">☰</button>
         </div>
 
         <ul class="sidebar-menu">
@@ -34,11 +34,11 @@
                     <i class="fa-solid fa-chevron-down arrow"></i>
                 </div>
                 <ul class="submenu">
-                    <li onclick="onClickSection(this)" id="pcSection"><i class="fa-solid fa-desktop"></i> PC/ Laptop</li>
-                    <li onclick="onClickSection(this)" id="printerSection"><i class="fa-solid fa-print"></i> Printer</li>
-                    <li onclick="onClickSection(this)" id="routerSection"><i class="fa-solid fa-route"></i> Router</li>
-                    <li onclick="onClickSection(this)" id="wifiSection"><i class="fa-solid fa-wifi"></i> Access Point</li>
-                    <li onclick="onClickSection(this)" id="switchSection"> <i class="fa-solid fa-shuffle"></i> Swicth</li>
+                    <li onclick="showPage('pcPage', 'pcSection')" id="pcSection"><i class="fa-solid fa-desktop"></i> PC/Laptop</li>
+                    <li onclick="showPage('printerPage', 'printerSection')" id="printerSection"><i class="fa-solid fa-print"></i> Printer</li>
+                    <li onclick="showPage('routerPage', 'routerSection')" id="routerSection"><i class="fa-solid fa-route"></i> Router</li>
+                    <li onclick="showPage('wifiPage', 'wifiSection')" id="wifiSection"><i class="fa-solid fa-wifi"></i> Access Point</li>
+                    <li onclick="showPage('switchPage', 'switchSection')" id="switchSection"><i class="fa-solid fa-shuffle"></i> Switch</li>
                 </ul>
             </li>
         </ul>
@@ -57,17 +57,16 @@
 </section>
 
 <section class="toolbar">
-    <button onclick="onClickSection(this)" id="themmoi">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openForm()">➕ Thêm thiết bị</button>
 
-    <select id="filterType"></select>
-    <!-- <select id="filterDept"></select> -->
+    <select id="filterType" class="filter-select"></select>
 
-     <input id="search" placeholder="Tìm kiếm..." />
+    <input id="search" placeholder="Tìm kiếm..." class="search-input" />
 
-    <input type="file" id="importFile" accept=".xlsx,.xls" />
-    <button onclick="handleImport()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="downloadTemplate()">Tải file mẫu</button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" />
+    <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
+    <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
+    <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
      <table>
         <thead>
@@ -103,17 +102,16 @@
 </section>
 
 <section class="toolbar">
-    <button onclick="onClickSection(this)" id="newprinter">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormPrt()">➕ Thêm thiết bị</button>
 
-    <select id="filterType"></select>
-    <select id="filterDept"></select>
+    <select id="filterType" class="filter-select"></select>
 
-     <input id="search" placeholder="Tìm kiếm..." />
+    <input id="search" placeholder="Tìm kiếm..." class="search-input" />
 
-    <input type="file" id="importFile" accept=".xlsx,.xls" />
-    <button onclick="handleImport()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="downloadTemplate()">Tải file mẫu</button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" />
+    <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
+    <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
+    <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
      <table>
         <thead>
@@ -148,17 +146,16 @@
 </section>
 
 <section class="toolbar">
-    <button onclick="openFormRouter()" id="newrouter">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormPrt()">➕ Thêm thiết bị</button>
 
-    <select id="filterType"></select>
-    <select id="filterDept"></select>
+    <select id="filterType" class="filter-select"></select>
 
-     <input id="search" placeholder="Tìm kiếm..." />
+    <input id="search" placeholder="Tìm kiếm..." class="search-input" />
 
-    <input type="file" id="importFile" accept=".xlsx,.xls" />
-    <button onclick="handleImport()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="downloadTemplate()">Tải file mẫu</button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" />
+    <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
+    <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
+    <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
      <table>
         <thead>
@@ -195,18 +192,16 @@
 </section>
 
 <section class="toolbar">
-    <button onclick="openFormWifi()" id="newwifi">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormSwitch()">➕ Thêm thiết bị</button>
 
-    <select id="filterType"></select>
-    <select id="filterDept"></select>
+    <select id="filterType" class="filter-select"></select>
 
-     <input id="search" placeholder="Tìm kiếm..." />
+    <input id="search" placeholder="Tìm kiếm..." class="search-input" />
 
-    <input type="file" id="importFile" accept=".xlsx,.xls" />
-    <button onclick="handleImport()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="downloadTemplate()">Tải file mẫu</button>
-</section>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" />
+    <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
+    <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
+    <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
      <table>
         <thead>
             <tr>
@@ -241,17 +236,16 @@
 </section>
 
 <section class="toolbar">
-    <button onclick="openFormSwitch()" id="newswitch">➕ Thêm thiết bị</button>
+    <button class="btn-action" onclick="openFormRouter()">➕ Thêm thiết bị</button>
 
-    <select id="filterType"></select>
-    <select id="filterDept"></select>
+    <select id="filterType" class="filter-select"></select>
 
-     <input id="search" placeholder="Tìm kiếm..." />
+    <input id="search" placeholder="Tìm kiếm..." class="search-input" />
 
-    <input type="file" id="importFile" accept=".xlsx,.xls" />
-    <button onclick="handleImport()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="downloadTemplate()">Tải file mẫu</button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" />
+    <button class="btn-secondary-outline" onclick="document.getElementById('importFile').click()">📥 Import Excel</button>
+    <button class="btn-secondary-outline" onclick="exportExcel()">📤 Export Excel</button>
+    <button class="btn-secondary-outline" onclick="downloadTemplate()">📋 Tải mẫu</button>
 </section>
      <table>
         <thead>

@@ -2,6 +2,12 @@
 let typeChart = null;
 let statusChart = null;
 
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initDashboard();
+  setupImportHandler();
+});
+
 // Initialize dashboard charts
 function initDashboard() {
   updateDashboard();
@@ -9,6 +15,7 @@ function initDashboard() {
   // Type Chart
   const typeCtx = document.getElementById('typeChart');
   if (typeCtx && typeCtx.getContext) {
+    if (typeChart) typeChart.destroy();
     typeChart = new Chart(typeCtx, {
       type: 'doughnut',
       data: {
@@ -45,6 +52,7 @@ function initDashboard() {
   // Status Chart
   const statusCtx = document.getElementById('statusChart');
   if (statusCtx && statusCtx.getContext) {
+    if (statusChart) statusChart.destroy();
     statusChart = new Chart(statusCtx, {
       type: 'bar',
       data: {
@@ -89,7 +97,6 @@ function initDashboard() {
 
 // Update dashboard with data
 function updateDashboard() {
-  // Sample data - replace with real data from your assets array
   const typeCounts = {
     'Laptop': 0,
     'Desktop': 0,
@@ -107,11 +114,17 @@ function updateDashboard() {
   };
 
   // Update counters
-  document.getElementById('pcCount').innerText = '0';
-  document.getElementById('printerCount').innerText = '0';
-  document.getElementById('routerCount').innerText = '0';
-  document.getElementById('wifiCount').innerText = '0';
-  document.getElementById('switchCount').innerText = '0';
+  const pcCountEl = document.getElementById('pcCount');
+  const printerCountEl = document.getElementById('printerCount');
+  const routerCountEl = document.getElementById('routerCount');
+  const wifiCountEl = document.getElementById('wifiCount');
+  const switchCountEl = document.getElementById('switchCount');
+  
+  if (pcCountEl) pcCountEl.innerText = '0';
+  if (printerCountEl) printerCountEl.innerText = '0';
+  if (routerCountEl) routerCountEl.innerText = '0';
+  if (wifiCountEl) wifiCountEl.innerText = '0';
+  if (switchCountEl) switchCountEl.innerText = '0';
 
   // Update charts if they exist
   if (typeChart) {
@@ -137,144 +150,70 @@ function updateDashboard() {
   }
 }
 
-function showPC() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("pcPage").classList.add("active");
-}
-function toggleDeviceMenu() {
-  const menu = document.getElementById("deviceMenu");
-  const title = document.querySelector(".menu-title");
-
-  if (menu.style.display === "block") {
-    menu.style.display = "none";
-    title.innerHTML = "▶ Thiết bị";
-  } else {
-    menu.style.display = "block";
-    title.innerHTML = "▼ Thiết bị";
+// Show/hide pages
+function showPage(pageId, activeMenuId) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+  
+  // Show selected page
+  const page = document.getElementById(pageId);
+  if (page) {
+    page.classList.add('active');
+  }
+  
+  // Update active menu
+  document.querySelectorAll('.submenu li').forEach(item => item.classList.remove('active'));
+  if (activeMenuId) {
+    const activeMenu = document.getElementById(activeMenuId);
+    if (activeMenu) {
+      activeMenu.classList.add('active');
+    }
+  }
+  
+  // Initialize dashboard if showing default page
+  if (pageId === 'defaultPage') {
+    initDashboard();
   }
 }
 
-function onClickSection(e) {
-  console.log(e.id);
-  const id = e.id;
-  
-  // Remove active class from all submenu items
-  const allSubmenuItems = document.querySelectorAll('.submenu li');
-  allSubmenuItems.forEach(item => item.classList.remove('active'));
-  
-  // Add active class to clicked element
-  if (e.classList.contains('submenu')) {
-    e.classList.add('active');
-  }
-  
-  switch (id) {
-    case "pcSection":
-      document.getElementById("pcSection").classList.add('active');
-      showPC();
-      break;
-    case "themmoi":
-      openForm();
-      break;
-    case "newprinter":
-      openFormPrt();
-      break;
-    case "printerSection":
-      document.getElementById("printerSection").classList.add('active');
-      showPrinter();
-      break;
-    case "routerSection":
-      document.getElementById("routerSection").classList.add('active');
-      showRouter();
-      break;
-    case "wifiSection":
-      document.getElementById("wifiSection").classList.add('active');
-      showWifi();
-      break;
-    case "switchSection":
-      document.getElementById("switchSection").classList.add('active');
-      showSwitch();
-      break;
-    default:
-      document.getElementById("defaultPage").classList.add("active");
-      document.getElementById("pcPage").classList.remove("active");
-      document.getElementById("printerPage").classList.remove("active");
-      document.getElementById("routerPage").classList.remove("active");
-      document.getElementById("wifiPage").classList.remove("active");
-      document.getElementById("switchPage").classList.remove("active");
-      document.getElementById("formModal").classList.remove("active-flex");
-      initDashboard();
-      break;
-  }
-}
-
-function showPC() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("pcPage").classList.add("active");
-  document.getElementById("printerPage").classList.remove("active");
-  document.getElementById("routerPage").classList.remove("active");
-  document.getElementById("wifiPage").classList.remove("active");
-  document.getElementById("switchPage").classList.remove("active");
-}
-function showPrinter() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("printerPage").classList.add("active");
-  document.getElementById("pcPage").classList.remove("active");
-  document.getElementById("routerPage").classList.remove("active");
-  document.getElementById("wifiPage").classList.remove("active");
-  document.getElementById("switchPage").classList.remove("active");
-}
-function showRouter() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("routerPage").classList.add("active");
-  document.getElementById("pcPage").classList.remove("active");
-  document.getElementById("printerPage").classList.remove("active");
-  document.getElementById("wifiPage").classList.remove("active");
-  document.getElementById("switchPage").classList.remove("active");
-}
-function showWifi() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("wifiPage").classList.add("active");
-  document.getElementById("pcPage").classList.remove("active");
-  document.getElementById("printerPage").classList.remove("active");
-  document.getElementById("routerPage").classList.remove("active");
-  document.getElementById("switchPage").classList.remove("active");
-}
-function showSwitch() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("switchPage").classList.add("active");
-  document.getElementById("pcPage").classList.remove("active");
-  document.getElementById("printerPage").classList.remove("active");
-  document.getElementById("routerPage").classList.remove("active");
-  document.getElementById("wifiPage").classList.remove("active");
-}
 function toggleSidebar() {
-  document.getElementById("sidebar").style.width = "100px";
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.style.width === '280px') {
+    sidebar.style.width = '80px';
+  } else {
+    sidebar.style.width = '280px';
+  }
 }
+
 function toggleSub(el) {
   const submenu = el.nextElementSibling;
-  const arrow = el.querySelector(".arrow");
+  const arrow = el.querySelector('.arrow');
 
-  if (submenu.style.display === "block") {
-    submenu.style.display = "none";
-    arrow.classList.remove("fa-chevron-down");
-    arrow.classList.add("fa-chevron-right");
+  if (submenu.style.display === 'block') {
+    submenu.style.display = 'none';
+    arrow.classList.remove('fa-chevron-down');
+    arrow.classList.add('fa-chevron-right');
   } else {
-    submenu.style.display = "block";
-    arrow.classList.remove("fa-chevron-right");
-    arrow.classList.add("fa-chevron-down");
+    submenu.style.display = 'block';
+    arrow.classList.remove('fa-chevron-right');
+    arrow.classList.add('fa-chevron-down');
   }
 }
+
 function openForm() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("formModal").classList.add("active-flex");
+  const form = document.getElementById('assetForm');
+  form.reset();
+  document.getElementById('formModal').classList.add('active-flex');
   // Initialize dropdowns for PC/Laptop form
   initializeTypeDropdown('assetForm', ['Desktop', 'Laptop', 'Macbook']);
   initializeDeptDropdown('assetForm');
   initializeStatusDropdown('assetForm');
 }
+
 function openFormPrt() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("formModalPrinter").classList.add("active-flex");
+  const form = document.getElementById('assetFormPrinter');
+  form.reset();
+  document.getElementById('formModalPrinter').classList.add('active-flex');
   // Initialize dropdowns for Printer form
   initializeTypeDropdown('assetFormPrinter', ['Máy in đen trắng', 'Máy in màu', 'Máy scan', 'Máy photocopy']);
   initializeDeptDropdown('assetFormPrinter');
@@ -282,57 +221,47 @@ function openFormPrt() {
 }
 
 function openFormRouter() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("formModalRouter").classList.add("active-flex");
+  const form = document.getElementById('assetFormRouter');
+  form.reset();
+  document.getElementById('formModalRouter').classList.add('active-flex');
   // Initialize dropdowns for Router form
   initializeStatusDropdown('assetFormRouter');
 }
 
 function openFormWifi() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("formModalWifi").classList.add("active-flex");
+  const form = document.getElementById('assetFormWifi');
+  form.reset();
+  document.getElementById('formModalWifi').classList.add('active-flex');
   // Initialize dropdowns for Access Point form
   initializeStatusDropdown('assetFormWifi');
 }
 
 function openFormSwitch() {
-  document.getElementById("defaultPage").classList.remove("active");
-  document.getElementById("formModalSwitch").classList.add("active-flex");
+  const form = document.getElementById('assetFormSwitch');
+  form.reset();
+  document.getElementById('formModalSwitch').classList.add('active-flex');
   // Initialize dropdowns for Switch form
   initializeStatusDropdown('assetFormSwitch');
 }
 
 function closeForm() {
-  document.getElementById("formModal").classList.remove("active-flex");
-  document.getElementById("formModalPrinter").classList.remove("active-flex");
-  document.getElementById("formModalRouter").classList.remove("active-flex");
-  document.getElementById("formModalWifi").classList.remove("active-flex");
-  document.getElementById("formModalSwitch").classList.remove("active-flex");
+  document.getElementById('formModal').classList.remove('active-flex');
+  document.getElementById('formModalPrinter').classList.remove('active-flex');
+  document.getElementById('formModalRouter').classList.remove('active-flex');
+  document.getElementById('formModalWifi').classList.remove('active-flex');
+  document.getElementById('formModalSwitch').classList.remove('active-flex');
 }
 
 // Close modal when clicking outside the modal content
 document.addEventListener('click', function(event) {
-  const formModal = document.getElementById('formModal');
-  const formModalPrinter = document.getElementById('formModalPrinter');
-  const formModalRouter = document.getElementById('formModalRouter');
-  const formModalWifi = document.getElementById('formModalWifi');
-  const formModalSwitch = document.getElementById('formModalSwitch');
+  const modals = ['formModal', 'formModalPrinter', 'formModalRouter', 'formModalWifi', 'formModalSwitch'];
   
-  if (event.target === formModal) {
-    formModal.classList.remove('active-flex');
-  }
-  if (event.target === formModalPrinter) {
-    formModalPrinter.classList.remove('active-flex');
-  }
-  if (event.target === formModalRouter) {
-    formModalRouter.classList.remove('active-flex');
-  }
-  if (event.target === formModalWifi) {
-    formModalWifi.classList.remove('active-flex');
-  }
-  if (event.target === formModalSwitch) {
-    formModalSwitch.classList.remove('active-flex');
-  }
+  modals.forEach(modalId => {
+    const modal = document.getElementById(modalId);
+    if (event.target === modal) {
+      modal.classList.remove('active-flex');
+    }
+  });
 });
 
 // Initialize dropdowns when forms open
@@ -377,21 +306,31 @@ function initializeTypeDropdown(formId, types) {
   }
 }
 
+// Setup import file handler
+function setupImportHandler() {
+  const importInput = document.getElementById('importFile');
+  if (importInput) {
+    importInput.addEventListener('change', function() {
+      handleImport();
+    });
+  }
+}
+
 // Handle Import Excel file
 function handleImport() {
-  const importFile = document.getElementById("importFile");
-  if (!importFile.files || importFile.files.length == 0) {
-    alert("Chọn file Excel!");
+  const importFile = document.getElementById('importFile');
+  if (!importFile.files || importFile.files.length === 0) {
+    alert('Vui lòng chọn file Excel!');
     return;
   }
   
   const file = importFile.files[0];
   
   // Check file format
-  const ext = file.name.split(".").pop().toLowerCase();
-  if (ext !== "xls" && ext !== "xlsx") {
-    alert("File không đúng định dạng Excel (.xls, .xlsx)");
-    importFile.value = "";
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext !== 'xls' && ext !== 'xlsx') {
+    alert('File không đúng định dạng Excel (.xls, .xlsx)');
+    importFile.value = '';
     return;
   }
   
@@ -404,11 +343,11 @@ function handleImport() {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(worksheet);
       
-      console.log('Imported data:', json);
+      console.log('Dữ liệu import:', json);
       alert('Import Excel thành công! ' + json.length + ' dòng được tải.');
-      importFile.value = ""; // Reset input
+      importFile.value = ''; // Reset input
     } catch (error) {
-      console.error('Error reading file:', error);
+      console.error('Lỗi khi đọc file:', error);
       alert('Lỗi khi đọc file: ' + error.message);
     }
   };
@@ -417,22 +356,34 @@ function handleImport() {
 
 // Export data to Excel
 function exportExcel() {
-  // Create sample data structure
-  const headers = ['STT', 'Mã TB', 'Tên TB', 'Loại', 'Người dùng', 'Phòng ban', 'Trạng thái', 'Cấu hình', 'Ngày nhập', 'Ghi chú'];
-  const data = [headers]; // Start with headers
+  // Create sample data structure based on current page
+  const activePage = document.querySelector('.page.active');
+  let headers = ['STT', 'Mã TB', 'Tên TB', 'Loại', 'Người dùng', 'Phòng ban', 'Trạng thái', 'Ghi chú'];
+  
+  if (activePage && activePage.id === 'printerPage') {
+    headers = ['STT', 'Mã TB', 'Tên TB', 'Hãng/Model', 'Loại máy', 'Địa điểm', 'Phòng ban', 'Trạng thái', 'Ghi chú'];
+  } else if (activePage && activePage.id === 'routerPage') {
+    headers = ['STT', 'Mã TB', 'Tên TB', 'Hãng', 'Model', 'IP WAN', 'IP LAN', 'Vị trí', 'Ngày lắp', 'Trạng thái', 'Ghi chú'];
+  }
+  
+  const data = [headers];
   
   // Get data from current table
   const table = document.querySelector('table tbody');
   if (table) {
     const rows = table.querySelectorAll('tr');
-    rows.forEach(row => {
+    rows.forEach((row, index) => {
       const cells = row.querySelectorAll('td');
-      if (cells.length > 1) { // Skip empty rows
+      if (cells.length > 1) {
         const rowData = [];
-        cells.forEach(cell => {
-          rowData.push(cell.textContent);
+        cells.forEach((cell, cellIndex) => {
+          if (cellIndex < headers.length) {
+            rowData.push(cell.textContent.trim());
+          }
         });
-        data.push(rowData);
+        if (rowData.some(cell => cell !== '')) {
+          data.push(rowData);
+        }
       }
     });
   }
@@ -440,11 +391,14 @@ function exportExcel() {
   // Create workbook and add data
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Thiết Bị");
+  XLSX.utils.book_append_sheet(wb, ws, 'Thiết Bị');
+  
+  // Style header row
+  ws['!cols'] = Array(headers.length).fill({ wch: 18 });
   
   // Download file
-  XLSX.writeFile(wb, `Danh_sach_thiet_bi_${new Date().toISOString().slice(0,10)}.xlsx`);
-  alert('Export Excel thành công!');
+  const fileName = `Danh_sach_thiet_bi_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(wb, fileName);
 }
 
 // Download template
@@ -457,10 +411,6 @@ function downloadTemplate() {
   ];
   
   const ws = XLSX.utils.aoa_to_sheet(templateData);
-  ws['A1'].font = { bold: true, color: { rgb: 'FFFFFF' } };
-  ws['A1'].fill = { fgColor: { rgb: 'EB8023' } };
-  
-  // Auto-adjust column widths
   ws['!cols'] = [
     { wch: 12 },
     { wch: 25 },
@@ -474,20 +424,15 @@ function downloadTemplate() {
   ];
   
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Mẫu");
+  XLSX.utils.book_append_sheet(wb, ws, 'Mẫu');
   
   XLSX.writeFile(wb, 'Mau_nhap_thiet_bi.xlsx');
-  alert('Tải file mẫu thành công!');
 }
 
 // Save item to database (simulated)
 function saveItem() {
   const form = event.target.closest('form');
   if (!form) return;
-  
-  // Get form data
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
   
   // Validate required fields
   const requiredFields = form.querySelectorAll('[required]');
@@ -507,8 +452,12 @@ function saveItem() {
     return;
   }
   
-  console.log('Saving item:', data);
-  alert('Lưu dữ liệu thành công!\n' + JSON.stringify(data, null, 2));
+  // Get form data
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
+  
+  console.log('Lưu dữ liệu:', data);
+  alert('✓ Lưu dữ liệu thành công!');
   
   // Reset form and close
   form.reset();
